@@ -4,30 +4,33 @@ using CoolProject.Infrastructure.Data;
 using CoolProject.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
-[Route("api/[controller]")]
-[ApiController]
-[Authorize]
-public class ProductsController : ControllerBase
+namespace CoolProject.API.Controllers
 {
-    private readonly ApplicationDbContext _context;
-
-    public ProductsController(ApplicationDbContext context)
+    [Route("api/[controller]")]
+    [ApiController]
+    [Authorize]
+    public class ProductsController : ControllerBase
     {
-        _context = context;
-    }
+        private readonly ApplicationDbContext _context;
 
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
-    {
-        return await _context.Products.Include(p => p.Category).ToListAsync();
-    }
+        public ProductsController(ApplicationDbContext context)
+        {
+            _context = context;
+        }
 
-    [HttpPost]
-    [Authorize(Roles = "admin")]
-    public async Task<ActionResult<Product>> CreateProduct(Product product)
-    {
-        _context.Products.Add(product);
-        await _context.SaveChangesAsync();
-        return CreatedAtAction(nameof(GetProducts), new { id = product.Id }, product);
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        {
+            return await _context.Products.Include(p => p.Category).ToListAsync();
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "admin")]
+        public async Task<ActionResult<Product>> CreateProduct(Product product)
+        {
+            _context.Products.Add(product);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction(nameof(GetProducts), new { id = product.Id }, product);
+        }
     }
 }

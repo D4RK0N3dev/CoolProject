@@ -18,20 +18,35 @@ namespace CoolProject.Infrastructure.Data
             using var connection = new SQLiteConnection(_connectionString);
             connection.Open();
 
-            using var command = new SQLiteCommand(connection);
-            command.CommandText = @"
+            using var commandUsers = new SQLiteCommand(connection);
+            commandUsers.CommandText = @"
                 CREATE TABLE IF NOT EXISTS Users (
                     Id INTEGER PRIMARY KEY AUTOINCREMENT,
                     Username TEXT NOT NULL,
                     PasswordHash TEXT NOT NULL,
                     Role TEXT NOT NULL
                 )";
-            command.ExecuteNonQuery();
-
-            using var reader = command.ExecuteReader();
-            while (reader.Read())
+            commandUsers.ExecuteNonQuery();
+            using var readerUsers = commandUsers.ExecuteReader();
+            while (readerUsers.Read())
             {
-                var url = reader.GetString(0);
+                var url = readerUsers.GetString(0);
+                Console.WriteLine(url);
+            }
+
+            using var commandProducts = new SQLiteCommand(connection);
+            commandProducts.CommandText = @"
+                CREATE TABLE IF NOT EXISTS Products (
+                    Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    Name TEXT NOT NULL,
+                    Price DECIMAL NOT NULL,
+                    CategoryId INTEGER NOT NULL
+                )";
+            commandProducts.ExecuteNonQuery();
+            using var readerProducts = commandProducts.ExecuteReader();
+            while (readerProducts.Read())
+            {
+                var url = readerProducts.GetString(0);
                 Console.WriteLine(url);
             }
         }
